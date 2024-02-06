@@ -1,0 +1,15 @@
+#include <iostream>
+
+#include "Cell.hh"
+
+Cell::Cell() : possibles(9, true), nPossibles(9), solvedValue(0) {
+}
+
+bool Cell::checkValue(unsigned val){
+  if(val<possibles.size()){
+    return possibles[val];
+  }
+  std::cout << " Warning. Tried to access 'possible' value " << val
+	    << " which is larger than the grid dimension " << possibles.size() << std::endl;
+  return false;
+}
