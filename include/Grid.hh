@@ -11,8 +11,10 @@
 // The grid can be printed to show the content of the grid.
 
 #include <vector>
+#include <memory>
 
 #include "Cell.hh"
+#include "Ternary.hh"
 
 class Grid{
   
@@ -22,12 +24,21 @@ public:
   void printGridDimension();
   void printGridNSquares();
   void printGrid();
+  void printCellIDs();
 
   void setCellValue(unsigned row, unsigned col, unsigned val);
 
+  inline unsigned getCellID(unsigned row, unsigned col);
+  inline std::pair<unsigned, unsigned> getCellRowCol(unsigned cellID);
+  
+  inline bool checkValidValue(unsigned val);
+  inline bool checkValidCellID(unsigned cellID);
+  inline bool checkValidRowCol(unsigned row, unsigned col);
+  
 private:
   unsigned gridDim;
-  std::vector< Cell > cells;
+  std::vector< std::shared_ptr<Cell> > cells;
+  std::vector< Ternary > ternaries;
 };
 
 #endif // GRID_HH

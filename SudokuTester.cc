@@ -9,24 +9,21 @@ int main(int argc, char** argv){
 
     // testing basic print statements
     if( std::string(argv[1]).compare("Test1")==0){
-      // this is test 1 from CMake
       Grid a;
       a.printGridDimension();
       a.printGridNSquares();
       return 0;
     }
 
-    // testing 'setCellValue' 1
+    // testing 'setCellValue' setting an invalid value
     if( std::string(argv[1]).compare("Test2")==0){
-      // this is test 1 from CMake
       Grid a;
       a.setCellValue(0,0,999);
       return 0;
     }
 
-    // testing 'setCellValue' 2
+    // testing 'setCellValue' setting the value twice with different values
     if( std::string(argv[1]).compare("Test3")==0){
-      // this is test 1 from CMake
       Grid a;
       a.setCellValue(0,0,2);
       a.setCellValue(0,0,3);

@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "Grid.hh"
+#include "Ternary.hh"
 
 int main(){
-
 
   Grid a;
   a.printGridDimension();
@@ -14,7 +14,9 @@ int main(){
   a.setCellValue(0,1,2);
   a.setCellValue(0,2,3);
 
-  a.printGrid();  
-  
+  a.printGrid();
+
+  // a.printCellIDs();
+
   return 0;
 }

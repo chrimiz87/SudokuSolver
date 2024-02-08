@@ -2,38 +2,41 @@
 
 #include "Cell.hh"
 
-Cell::Cell() : possibles(9, true), nPossibles(9), solvedValue(0) {
+Cell::Cell(unsigned ID) : cellID(ID), possibles(9, true), nPossibles(9), solvedValue(0) {
+}
+
+unsigned Cell::getID(){
+  return cellID;
 }
 
 bool Cell::checkValue(unsigned val){
 
   // if the cell is already solved
-  if(nPossibles==1){
+  if(isSolved()){
     return (solvedValue == val);
   }
-  
-  unsigned tmp = val-1; // convert from 'user' 1-9 to vector index 0-8
-  if(tmp>=0 && tmp<possibles.size()){
-    return possibles[tmp];
-  }
-  std::cout << " Warning. Tried to access 'possible' value " << val
-	    << " which is not in the range 1 -- " << possibles.size()+1 << std::endl;
-  return false;
+
+  return possibles[val-1];
 }
 
 void Cell::setValue(unsigned val){
 
-  if(nPossibles==1 && solvedValue != val){
-    std::cout << " Warning Cell::setValue. tried to set value " << val
+  if(isSolved() && solvedValue != val){
+    std::cout << " Warning in Cell::" << __FUNCTION__ << ". tried to set value " << val
 	      << " but this cell is already solved with value " << solvedValue << std::endl;
-  }
-  
-  if(val==0 || val>9){
-    std::cout << " Warning in Cell::setValue. val " << val
-	      << " not valid, must be from 1-9 " << std::endl;
-    return; 
   }
   
   nPossibles = 1;
   solvedValue = val;
+}
+
+bool Cell::isSolved(){
+  return (nPossibles==1);
+}
+
+unsigned Cell::getSolvedValue(){
+  if(not isSolved()){
+    std::cout << " Warning in Cell::" << __FUNCTION__ << ". This cell is not solved. Returning zero." << std::endl;
+  }
+  return solvedValue;
 }

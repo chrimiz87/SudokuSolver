@@ -12,22 +12,29 @@
 // possible values is equal to 1.
 // The last remaining value is stored.
 
+// The cells are only accessed from the Grid class. The design is such that all checks
+// on the validity of inputs (values between 1 and 9, cell IDs from 0 to 80, ...) are
+// handled in the Grid class.
+
 #include <vector>
 
 class Cell{
 public:
-  Cell();
+  Cell() = delete;
+  Cell(unsigned ID);
 
-  // bool getIsSolved();
-  // unsigned getSolvedValue();
-  // std::vector<bool> getPossibles();
+  unsigned getID();
 
   bool checkValue(unsigned val);
 
   void setValue(unsigned val);
 
+  bool isSolved();
+  unsigned getSolvedValue();
+
 private:
 
+  unsigned cellID;
   std::vector<bool> possibles;
   unsigned nPossibles;
   unsigned solvedValue;
