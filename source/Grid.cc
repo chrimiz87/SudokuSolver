@@ -42,3 +42,22 @@ void Grid::printGrid(){
     std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
   }
 }
+
+void Grid::setCellValue(unsigned row, unsigned col, unsigned val){
+
+  if(val==0 || val>9){
+    std::cout << " Warning in Grid::setCellValue. val " << val
+	      << " is not valid, must be from 1-9 " << std::endl;
+    return; 
+  }
+  
+  unsigned index = row*gridDim + col;
+  
+  if(index>=cells.size()){
+    std::cout << " Warning in Grid::setCellValue. index " << index
+	      << " not valid, number of cells = " << cells.size() << std::endl;
+    return; 
+  }
+  
+  cells.at(index).setValue(val);
+}

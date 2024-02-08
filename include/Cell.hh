@@ -24,8 +24,7 @@ public:
 
   bool checkValue(unsigned val);
 
-  // void setValue(unsigned val);
-  
+  void setValue(unsigned val);
 
 private:
 

@@ -2,25 +2,19 @@
 
 #include "Grid.hh"
 
-int main(int argc, char** argv){
+int main(){
 
-  if(argc>1){
-    // testing mode.
-
-    if( std::string(argv[1]).compare("Test1")==0){
-      // this is test 1 from CMake
-      Grid a;
-      a.printGridDimension();
-      a.printGridNSquares();
-      return 0;
-    }
-    
-  }
 
   Grid a;
   a.printGridDimension();
   a.printGridNSquares();
   a.printGrid();
 
+  a.setCellValue(0,0,1);
+  a.setCellValue(0,1,2);
+  a.setCellValue(0,2,3);
+
+  a.printGrid();  
+  
   return 0;
 }

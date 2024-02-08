@@ -8,7 +8,7 @@
 // The grid is created with a gridDim = 9.
 // The content of cells can be set via the grid. The input must be sanitised
 // to ensure a reasonable puzzle. 
-// The grid can be drawn to show the content of the grid.
+// The grid can be printed to show the content of the grid.
 
 #include <vector>
 
@@ -22,6 +22,8 @@ public:
   void printGridDimension();
   void printGridNSquares();
   void printGrid();
+
+  void setCellValue(unsigned row, unsigned col, unsigned val);
 
 private:
   unsigned gridDim;
