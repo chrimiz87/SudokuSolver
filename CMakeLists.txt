@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 ###################################################################
 
 ## project name and version 
-project(SudokuSolver VERSION ${projectversion})
+project(SudokuSolver VERSION ${projectversion} )
 
 ## contains libraries for all classes used in the project
 add_subdirectory(source)
@@ -35,6 +35,16 @@ target_link_libraries(SudokuTester PUBLIC Cell )
 target_link_libraries(SudokuTester PUBLIC NineCell )
 target_link_libraries(SudokuTester PUBLIC Ternary )
 target_link_libraries(SudokuTester PUBLIC Grid )
+
+###################################################################
+
+## project name and version 
+project(SudokuTester VERSION ${projectversion} )
+
+add_executable(SudokuTester SudokuTester.cc)
+
+target_link_libraries(SudokuTester PUBLIC Grid )
+target_link_libraries(SudokuTester PUBLIC Cell )
 
 ###################################################################
 
