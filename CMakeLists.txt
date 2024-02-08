@@ -38,16 +38,6 @@ target_link_libraries(SudokuTester PUBLIC Grid )
 
 ###################################################################
 
-## project name and version 
-project(SudokuTester VERSION ${projectversion} )
-
-add_executable(SudokuTester SudokuTester.cc)
-
-target_link_libraries(SudokuTester PUBLIC Grid )
-target_link_libraries(SudokuTester PUBLIC Cell )
-
-###################################################################
-
 enable_testing()
 
 ## define a function that helps generate tests

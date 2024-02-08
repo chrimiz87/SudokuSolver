@@ -40,20 +40,3 @@ unsigned Cell::getSolvedValue(){
   }
   return solvedValue;
 }
-
-void Cell::setValue(unsigned val){
-
-  if(nPossibles==1 && solvedValue != val){
-    std::cout << " Warning Cell::setValue. tried to set value " << val
-	      << " but this cell is already solved with value " << solvedValue << std::endl;
-  }
-  
-  if(val==0 || val>9){
-    std::cout << " Warning in Cell::setValue. val " << val
-	      << " not valid, must be from 1-9 " << std::endl;
-    return; 
-  }
-  
-  nPossibles = 1;
-  solvedValue = val;
-}
