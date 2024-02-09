@@ -20,6 +20,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+    - name: pwd and list
+      run: pwd; ls -ltr
+
+    - name: workspace and list
+      run: echo ${{github.workspace}}; ls -ltr ${{github.workspace}}
+      
     - uses: actions/checkout@v4.1.1
 
     - name: Configure CMake
