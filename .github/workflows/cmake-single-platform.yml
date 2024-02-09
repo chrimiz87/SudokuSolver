@@ -27,7 +27,7 @@ jobs:
     - name: workspace and list
       run: echo ${{github.workspace}}; ls -ltr ${{github.workspace}}
       
-    - uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v3
 
     - name: pwd and list again, after checkout 
       run: pwd; ls -ltr
