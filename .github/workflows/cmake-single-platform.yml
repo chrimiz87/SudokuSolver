@@ -32,8 +32,8 @@ jobs:
     - name: pwd and list again, after checkout 
       run: pwd; ls -ltr
 
-    - name: cat Cell.cc and Ternary.cc
-      run: cat ./source/Cell.cc ; cat ./source/Ternary.cc
+    - name: cat Cell.cc and Ternary.cc and CMakeLists.txt
+      run: cat ./source/Cell.cc ; cat ./source/Ternary.cc ; cat ./CMakeLists.txt
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
