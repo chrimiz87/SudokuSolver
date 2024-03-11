@@ -2,6 +2,8 @@
 #include <algorithm>
 
 #include "Grid.hh"
+#include "Cell.hh"
+#include "Ternary.hh"
 
 Grid::Grid() : gridDim(9) , ternaries(6) {
   // create 9x9 array of Cells on the heap, holding only shared pointers.
@@ -98,6 +100,33 @@ void Grid::setCellValue(unsigned row, unsigned col, unsigned val){
   cells[cellID]->setValue(val);
 }
 
+void Grid::setGridValues(std::vector< std::vector<unsigned> >& rows){
+  if(rows.size()!=9){
+    std::cout << "Warning in Grid::" << __FUNCTION__
+	      << ". Cannot set the grid values with " << rows.size() << " rows " << std::endl;
+    return; 
+  }
+  for(unsigned row=0; row<rows.size(); ++row){
+    setRowValues(row, rows[row]);
+  }
+  
+}
+
+void Grid::setRowValues(unsigned row, std::vector<unsigned>& vals){
+
+  if(vals.size() != 9){
+    std::cout << "Warning in Grid::" << __FUNCTION__
+	      << ". Cannot set a row of dimension " << vals.size() << std::endl;
+    return; 
+  }
+  
+  for(unsigned col=0; col<vals.size(); ++col){
+    if(vals[col]>0){
+      setCellValue(row, col, vals[col]);
+    }
+  }
+}
+
 inline unsigned Grid::getCellID(unsigned row, unsigned col){
   return (row*gridDim + col);
 }
@@ -112,4 +141,54 @@ inline bool Grid::checkValidCellID(unsigned cellID){
 
 inline bool Grid::checkValidRowCol(unsigned row, unsigned col){
   return (row<gridDim && col<gridDim);
+}
+
+bool Grid::resolve(){
+
+  bool progress = false;
+
+  // make one 'resolve' step, calling 'resolveAll' on each Ternary
+  auto resolveall = [&](Ternary& tern){
+    progress |= tern.resolveAll();
+  };
+
+  std::for_each( std::begin(ternaries), std::end(ternaries), resolveall );
+
+  return progress;
+}
+
+// attempt to solve the puzzle
+void Grid::solve(){
+  unsigned countProgress = 0;
+  bool progress = false;
+  while(countProgress<3){
+    // run resolve until no progress is made
+    progress = resolve();
+
+    // check if the puzzle is solved
+    if(isSolved()){
+      break;
+    }
+    
+    // count lack of progress
+    if(not progress){
+      ++countProgress;
+    }
+  }
+
+  std::cout << " Finished solving the puzzle ";
+  if(countProgress==3){
+    std::cout << "due to progress having stalled" << std::endl;
+  }
+  else{
+    std::cout << "successfully!" << std::endl;
+  }
+}
+
+bool Grid::isSolved(){
+  for(auto& cell : cells){
+    if( not cell->isSolved())
+      return false; 
+  }
+  return true;
 }
