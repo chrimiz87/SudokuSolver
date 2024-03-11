@@ -15,7 +15,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 14.0)
 ###################################################################
 
 ## project name and version 
-project(SudokuSolver VERSION ${projectversion} )
+project(SudokuSolver VERSION ${projectversion})
 
 ## contains libraries for all classes used in the project
 add_subdirectory(source)
