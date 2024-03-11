@@ -41,7 +41,7 @@ jobs:
     - name: cat CMakeLists.txt
       run: cat ./CMakeLists.txt
 
-    - create build directory 
+    - name: create build directory 
       run: mkdir build
 
     - configure CMake
