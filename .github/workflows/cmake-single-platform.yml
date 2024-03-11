@@ -44,11 +44,11 @@ jobs:
     - name: create build directory 
       run: mkdir build
 
-    - configure CMake
+    - name: configure CMake
       working-directory: ${{github.workspace}}/build
       run: cmake ..
 
-    - build:
+    - name: build
       working-directory: ${{github.workspace}}/build
       run: make
 
