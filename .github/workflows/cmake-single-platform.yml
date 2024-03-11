@@ -42,7 +42,7 @@ jobs:
       run: cat ./CMakeLists.txt
 
     - create build directory 
-      run: mkdir build ;
+      run: mkdir build
 
     - configure CMake
       working-directory: ${{github.workspace}}/build
