@@ -22,6 +22,9 @@ public:
   void printCellIDs();
 
   void addCell(unsigned index, std::shared_ptr<Cell>& cell);
+
+  bool resolveAll();
+  bool resolveComplex();
   bool resolveNineCells();
 
 private:

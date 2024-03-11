@@ -17,6 +17,7 @@
 // handled in the Grid class.
 
 #include <vector>
+#include <set>
 
 class Cell{
 public:
@@ -28,9 +29,15 @@ public:
   bool checkValue(unsigned val);
 
   void setValue(unsigned val);
+  bool removePossible(unsigned val);
+  void makeSolved();
 
   bool isSolved();
   unsigned getSolvedValue();
+  unsigned findSolvedValue();
+  unsigned getNPossibles();
+
+  std::set<unsigned> getSetOfPossibles();
 
 private:
 
@@ -38,6 +45,7 @@ private:
   std::vector<bool> possibles;
   unsigned nPossibles;
   unsigned solvedValue;
+  bool     resolved;
 };
 
 #endif // CELL_HH

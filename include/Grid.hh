@@ -26,6 +26,8 @@ public:
   void printGrid();
   void printCellIDs();
 
+  void setGridValues(std::vector< std::vector<unsigned> >& vals);
+  void setRowValues(unsigned row, std::vector<unsigned>& vals);
   void setCellValue(unsigned row, unsigned col, unsigned val);
 
   inline unsigned getCellID(unsigned row, unsigned col);
@@ -34,6 +36,11 @@ public:
   inline bool checkValidValue(unsigned val);
   inline bool checkValidCellID(unsigned cellID);
   inline bool checkValidRowCol(unsigned row, unsigned col);
+
+  bool resolve();
+  void solve();
+
+  bool isSolved();
   
 private:
   unsigned gridDim;

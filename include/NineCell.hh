@@ -27,6 +27,15 @@ public:
   
   bool resolveConstraints();
 
+  bool checkForSetsOfOne();
+  bool checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>& theset, std::vector<unsigned>& indexes);
+  void removeValues(std::set<unsigned>& values, std::vector<unsigned>& indexes);
+  void removeCells(std::set<unsigned>& values, std::vector<unsigned>& indexes);
+
+  void setPossibles(unsigned index, std::vector<unsigned>& possibles);
+
+  void printPossibles();
+
 private:
   std::vector< std::shared_ptr<Cell> > cells;
 };

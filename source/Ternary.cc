@@ -38,6 +38,22 @@ void Ternary::addCell(unsigned index, std::shared_ptr<Cell>& cell){
   ncells[square+3].addCell(cell);
 }
 
+bool Ternary::resolveAll(){
+  bool progress = false;
+
+  // resolve simple rules on NineCell objects
+  progress |= resolveNineCells();
+
+  // resolve more complex rules on this Ternary
+  progress |= resolveComplex();
+
+  return progress;
+}
+
+bool Ternary::resolveComplex(){
+  return false;
+}
+
 bool Ternary::resolveNineCells(){
   
   bool progress = 0;
