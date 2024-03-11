@@ -32,21 +32,27 @@ jobs:
     - name: pwd and list again, after checkout 
       run: pwd; ls -ltr
 
-    - name: cat Cell.cc and Ternary.cc and CMakeLists.txt
-      run: cat ./source/Cell.cc ; cat ./source/Ternary.cc ; cat ./CMakeLists.txt
+    - name: cat Cell.cc
+      run: cat ./source/Cell.cc
 
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: cat Ternary.cc
+      run: cat ./source/Ternary.cc
 
-    - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: cat CMakeLists.txt
+      run: cat ./CMakeLists.txt
+
+    - create build directory 
+      run: mkdir build ;
+
+    - configure CMake
+      working-directory: ${{github.workspace}}/build
+      run: cmake ..
+
+    - build:
+      working-directory: ${{github.workspace}}/build
+      run: make
 
     - name: Test
       working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      run: ctest
 
