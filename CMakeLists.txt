@@ -22,10 +22,11 @@ add_subdirectory(source)
 
 add_executable(SudokuSolver SudokuSolver.cc)
 
-target_link_libraries(SudokuSolver PUBLIC Cell )
-target_link_libraries(SudokuSolver PUBLIC NineCell )
-target_link_libraries(SudokuSolver PUBLIC Ternary )
-target_link_libraries(SudokuSolver PUBLIC Grid )
+target_link_libraries(SudokuSolver PRIVATE GridLibrary )
+## target_link_libraries(SudokuSolver PUBLIC Cell )
+## target_link_libraries(SudokuSolver PUBLIC NineCell )
+## target_link_libraries(SudokuSolver PUBLIC Ternary )
+## target_link_libraries(SudokuSolver PUBLIC Grid )
 
 ###################################################################
 
@@ -34,19 +35,20 @@ project(SudokuTester VERSION ${projectversion} )
 
 add_executable(SudokuTester SudokuTester.cc)
 
-target_link_libraries(SudokuTester PUBLIC Cell )
-target_link_libraries(SudokuTester PUBLIC NineCell )
-target_link_libraries(SudokuTester PUBLIC Ternary )
-target_link_libraries(SudokuTester PUBLIC Grid )
+target_link_libraries(SudokuTester PRIVATE GridLibrary )
+## target_link_libraries(SudokuTester PUBLIC Cell )
+## target_link_libraries(SudokuTester PUBLIC NineCell )
+## target_link_libraries(SudokuTester PUBLIC Ternary )
+## target_link_libraries(SudokuTester PUBLIC Grid )
 
 ###################################################################
 
 ## project name and version
 project(NineCellTester)
 add_executable(NineCellTester NineCellTester.cc)
-
-target_link_libraries(NineCellTester PUBLIC Cell)
-target_link_libraries(NineCellTester PUBLIC NineCell)
+target_link_libraries(NineCellTester PRIVATE NineCellLibrary)
+## target_link_libraries(NineCellTester PUBLIC Cell)
+## target_link_libraries(NineCellTester PUBLIC NineCell)
 
 ###################################################################
 
