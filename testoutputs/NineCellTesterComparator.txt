@@ -1,0 +1,94 @@
+Test 1. Check print function
+ printing NINECELL cells 
+0 1 2 3 4 5 6 7 8 
+
+Test 2. Try adding a 10th cell
+ Warning in NineCell::addCell. Cannot add more than 9 cells
+
+ Test 3. Test 'print possibles' function
+ Cell 0 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 1 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 2 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 3 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 4 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 5 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 6 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 7 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 8 possibles = 1 2 3 4 5 6 7 8 9 
+
+ Test 4. Set possibles for a cell
+ index 4 possibles 0 1 2 
+ index 6 possibles 0 1 2 
+ Cell 0 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 1 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 2 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 3 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 4 possibles = 1 2 
+ Cell 5 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 6 possibles = 1 2 
+ Cell 7 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 8 possibles = 1 2 3 4 5 6 7 8 9 
+
+ Test 5. Test 'remove values' function
+ Cell 0 possibles = 4 5 6 7 8 9 
+ Cell 1 possibles = 4 5 6 7 8 9 
+ Cell 2 possibles = 4 5 6 7 8 9 
+ Cell 3 possibles = 4 5 6 7 8 9 
+ Cell 4 possibles = 1 2 
+ Cell 5 possibles = 1 2 3 4 5 6 7 8 9 
+ Cell 6 possibles = 1 2 
+ Cell 7 possibles = 4 5 6 7 8 9 
+ Cell 8 possibles = 4 5 6 7 8 9 
+
+ Test 6. 'resolve' function with elaborate example 
+ index 0 possibles 4 5 
+ index 1 possibles 3 
+ cell 1 (1,0) was solved to value 3 after removing value 9
+ index 2 possibles 5 8 
+ index 3 possibles 1 2 4 5 7 8 
+ index 4 possibles 9 
+ cell 4 (4,0) was solved to value 9 after removing value 8
+ index 5 possibles 1 2 
+ index 6 possibles 1 2 4 5 8 
+ index 7 possibles 6 
+ cell 7 (7,0) was solved to value 6 after removing value 9
+ index 8 possibles 4 5 8 
+ Cell 0 possibles = 4 5 
+ Cell 1 possibles = 3 
+ Cell 2 possibles = 5 8 
+ Cell 3 possibles = 1 2 4 5 7 8 
+ Cell 4 possibles = 9 
+ Cell 5 possibles = 1 2 
+ Cell 6 possibles = 1 2 4 5 8 
+ Cell 7 possibles = 6 
+ Cell 8 possibles = 4 5 8 
+ cell IDs 1  possible values 3 
+ cell IDs 7  possible values 6 
+ cell IDs 3  possible values 7 
+ cell 3 (3,0) was solved to value 7 after removing value 2
+ cell IDs 4  possible values 9 
+ cell IDs 5 6  possible values 1 2 
+ cell IDs 0 2 8  possible values 4 5 8 
+ Cell 0 possibles = 4 5 
+ Cell 1 possibles = 3 
+ Cell 2 possibles = 5 8 
+ Cell 3 possibles = 7 
+ Cell 4 possibles = 9 
+ Cell 5 possibles = 1 2 
+ Cell 6 possibles = 1 2 
+ Cell 7 possibles = 6 
+ Cell 8 possibles = 4 5 8 
+ cell IDs 1  possible values 3 
+ cell IDs 7  possible values 6 
+ cell IDs 3  possible values 7 
+ cell IDs 4  possible values 9 
+ cell IDs 5 6  possible values 1 2 
+ Cell 0 possibles = 4 5 
+ Cell 1 possibles = 3 
+ Cell 2 possibles = 5 8 
+ Cell 3 possibles = 7 
+ Cell 4 possibles = 9 
+ Cell 5 possibles = 1 2 
+ Cell 6 possibles = 1 2 
+ Cell 7 possibles = 6 
+ Cell 8 possibles = 4 5 8 

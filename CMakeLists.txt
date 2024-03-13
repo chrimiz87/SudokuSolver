@@ -77,4 +77,4 @@ maketest(Test3 SudokuTester " Warning in Cell::setValue. tried to set value 3 bu
 ## The test will fail if the output of NineCellTester is different to what it was in the past.
 add_test(NAME NineCellTestRun COMMAND NineCellTester)
 add_test(NAME NineCellTestCompare COMMAND ${CMAKE_COMMAND} -E compare_files
-	      NineCellTester.txt NineCellTesterComparator.txt)
+	      NineCellTester.txt ${PROJECT_SOURCE_DIR}/testoutputs/NineCellTesterComparator.txt)
