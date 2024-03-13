@@ -86,6 +86,45 @@ int main(){
 
   ////////////////////////////////////////////////////
 
+  // Test 7.
+  std::cout << std::endl << " Test 7. 'resolve' function with simple " << std::endl;
+
+  // create a new NineCell object for this test
+  NineCell n3;
+  for(unsigned i=0; i<9; ++i){
+    auto a = std::make_shared<Cell>(i);
+    n3.addCell(a);
+  }
+
+  poss = {6};
+  n3.setPossibles(0, poss);
+  poss = {1};
+  n3.setPossibles(1, poss);
+  poss = {9};
+  n3.setPossibles(2, poss);
+  poss = {8,9};
+  n3.setPossibles(3, poss);
+  poss = {5};
+  n3.setPossibles(4, poss);
+  poss = {7};
+  n3.setPossibles(5, poss);
+  poss = {4};
+  n3.setPossibles(6, poss);
+  poss = {3};
+  n3.setPossibles(7, poss);
+  poss = {2};
+  n3.setPossibles(8, poss);
+
+  std::cout << std::endl;
+  n3.printPossibles();
+  
+  n3.resolveConstraints();
+
+  std::cout << std::endl;
+  n3.printPossibles();
+
+  ////////////////////////////////////////////////////
+  
   std::cout.rdbuf(coutbuf);
   out.close();
 

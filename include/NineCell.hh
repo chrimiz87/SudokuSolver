@@ -26,6 +26,7 @@ public:
   void addCell(std::shared_ptr<Cell>& cell);
   
   bool resolveConstraints();
+  bool setChecker(unsigned mode);
 
   bool checkForSets(unsigned mode, unsigned& setsize,
 		    std::set<unsigned>& theset, std::set<unsigned>& indexes);

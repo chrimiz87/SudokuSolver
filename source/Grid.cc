@@ -174,6 +174,11 @@ void Grid::solve(){
     if(not progress){
       ++countProgress;
     }
+    else{
+      // reset progress counter to zero
+      // if progress has been made
+      countProgress=0;
+    }
   }
 
   std::cout << " Finished solving the puzzle ";

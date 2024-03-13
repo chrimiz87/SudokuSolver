@@ -25,6 +25,28 @@ void NineCell::addCell(std::shared_ptr<Cell>& cell){
 }
 
 bool NineCell::resolveConstraints(){
+
+  // this function resolves constraints on this NineCell object.
+  // it runs a 'set checker' function in two modes.
+  // 
+  // the first mode (0) checks for sets of N cells that only contain
+  // the same N possible values (or a subset), in which case no other
+  // cells can contain any of the N values.
+  //
+  // the second mode (1) checks for sets of N values that are only
+  // possible in a set of N cells (or a subset), in which case those
+  // cells must contain only the N values.
+  
+  bool progress = false;
+
+  progress |= setChecker(0);
+  progress |= setChecker(1);
+
+  return progress;
+}
+
+bool NineCell::setChecker(unsigned mode){
+  
   // The most simple NineCell constraint is to check if there is a cell that is 
   // solved (one possible value) and ensure that this value does not appear in
   // any other cell.
@@ -47,32 +69,42 @@ bool NineCell::resolveConstraints(){
   
   // count number of unsolved cells
   unsigned n_unsolved = std::count_if(std::begin(cells), std::end(cells) , counter);
-  unsigned maxset = n_unsolved/2;
 
-  unsigned mode = 0; 
-  std::set<unsigned> theset;
-  std::set<unsigned> cellindexes;
-  for(unsigned setsize = 1; setsize<=maxset; ++setsize){
+  if(n_unsolved == 0){
+    // if everything is solved, nothing to do
+    return progress;
     
-    // first run with mode '0'
-    // in this mode, check for group of cells with the same set of possibles
-    mode = 0;
-    theset.clear();
-    cellindexes.clear();
-    progress |= checkForSets(mode, setsize, theset, cellindexes);
   }
-  
-  n_unsolved = std::count_if(std::begin(cells), std::end(cells) , counter);
-  maxset = n_unsolved/2;
-  
-  for(unsigned setsize = 1; setsize<=maxset; ++setsize){
+  else if(n_unsolved == 1){
+    // if there is only one unsolved cell, solution is trivial
+    // find the unsolved cell, and remove the solved values
+    // from the other cells
 
-    // second run with mode '1'
-    // in this mode, check for group of 'possibles' in the same set of cells
-    mode = 1;
-    theset.clear();
-    cellindexes.clear();
-    progress |= checkForSets(mode, setsize, theset, cellindexes);
+    auto isunsolved = [](auto& cell){
+      return not cell->isSolved();
+    };
+    auto unsolvedcell = std::find_if( std::begin(cells), std::end(cells), isunsolved);
+    
+    auto removeothervalues = [&](auto& cell){
+      if(cell != (*unsolvedcell) ){
+	progress |= (*unsolvedcell)->removePossible( cell->getSolvedValue() );
+      }
+    };
+    std::for_each(std::begin(cells), std::end(cells), removeothervalues);
+  }
+  else{
+    unsigned maxset = n_unsolved/2;
+
+    std::set<unsigned> setA;
+    std::set<unsigned> setB;
+    for(unsigned setsize = 1; setsize<=maxset; ++setsize){
+    
+      // first run with mode '0'
+      // in this mode, check for group of cells with the same set of possibles
+      setA.clear();
+      setB.clear();
+      progress |= checkForSets(mode, setsize, setA, setB);
+    }
   }
   
   return progress;
@@ -184,7 +216,7 @@ void NineCell::removeValues(std::set<unsigned>& values, std::set<unsigned>& inde
   for( unsigned idx=0; idx<cells.size(); ++idx){
     // find if this cell is NOT in the group 
     if( std::find(std::begin(indexes), std::end(indexes), idx) == std::end(indexes) ){
-
+      
       // if not in the group, removes 'values' from it
       for(auto& p: values){
 	// remove all values in the set from cells not in the group.
@@ -199,16 +231,7 @@ void NineCell::removeCells(std::set<unsigned>& indexes, std::set<unsigned>& valu
   // this function removes all possibles that are not in 'values'
   // from the cells in 'indexes'
 
-  std::cout << " cell IDs ";
-  for( auto& idx :  indexes)
-    std::cout << idx << " ";
-  std::cout << " possible values ";
-  for(auto& val : values){
-    std::cout << val << " ";
-  }
-  std::cout << std::endl;
-
-  for( auto& idx : indexes){
+  for(auto& idx : indexes){
 
     for(unsigned p = 1; p<10; ++p){
       if( std::find(std::begin(values), std::end(values), p) == std::end(values) ){
@@ -221,6 +244,10 @@ void NineCell::removeCells(std::set<unsigned>& indexes, std::set<unsigned>& valu
 }
 
 void NineCell::setPossibles(unsigned index, std::set<unsigned>& possibles){
+
+  // this function is used for testing NineCell objects. The user can set
+  // the possible value(s) of a given cell
+  
   if(index>cells.size()){
     std::cout << " Warning in NineCell::" << __FUNCTION__ << ", Cannot set possibles "
 	      << " for index " << index << " which is invalid " << std::endl;
