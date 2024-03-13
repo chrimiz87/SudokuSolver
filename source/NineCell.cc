@@ -51,20 +51,24 @@ bool NineCell::resolveConstraints(){
 
   unsigned mode = 0; 
   std::set<unsigned> theset;
-  std::vector<unsigned> cellindexes;
+  std::set<unsigned> cellindexes;
   for(unsigned setsize = 1; setsize<=maxset; ++setsize){
     
     // first run with mode '0'
     // in this mode, check for group of cells with the same set of possibles
-    std::cout <<"  MODE 0 " << std::endl;
     mode = 0;
     theset.clear();
     cellindexes.clear();
     progress |= checkForSets(mode, setsize, theset, cellindexes);
+  }
+  
+  n_unsolved = std::count_if(std::begin(cells), std::end(cells) , counter);
+  maxset = n_unsolved/2;
+  
+  for(unsigned setsize = 1; setsize<=maxset; ++setsize){
 
     // second run with mode '1'
     // in this mode, check for group of 'possibles' in the same set of cells
-    std::cout <<"  MODE 1 " << std::endl;
     mode = 1;
     theset.clear();
     cellindexes.clear();
@@ -74,23 +78,7 @@ bool NineCell::resolveConstraints(){
   return progress;
 }
 
-bool NineCell::checkForSetsOfOne(){
-  bool progress = false;
-  std::vector< std::shared_ptr<Cell> >::iterator iti = std::begin(cells);
-  for( ; iti != std::end(cells); ++iti){
-    
-    if( (*iti)->isSolved()){
-      // this cell is solved. Propagate this information to other cells in the NineCell
-      std::vector< std::shared_ptr<Cell> >::iterator itj = std::begin(cells);
-      for( ; itj != std::end(cells); ++itj){
-	progress |= (*itj)->removePossible( (*iti)->getSolvedValue() ); // value of 
-      }
-    }
-  }
-  return progress; 
-}
-
-bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>& theset, std::vector<unsigned>& indexes){
+bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>& setA, std::set<unsigned>& setB){
 
   // This code looks for groups of N cells that contain N possible values between them
   // (i.e. the Union of their possible values has size == N)
@@ -103,17 +91,23 @@ bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>
   //       removed from the other cells in the NineCell (the cells not in the group)
   //    c) if less than setsize, keep searching to try and complete the set (recursive)
 
+  // in MODE==0, setA == values and setB == indexes.
+  // in MODE==1, setA == indexes and setB == values.
+  
   bool progress = false;
   
   // first relevant index for the set check
-  unsigned firstindex = 0;
-  if(mode==0 && indexes.size()){
-    firstindex = indexes.back() + 1;
+  unsigned first = mode; // 0 or 1 
+  unsigned last  = cells.size() + mode; // (0..8) or (1..9)
+
+  // if not the first level of recursion
+  if(setB.size()){
+    first = (*setB.rbegin())+1;
   }
 
-  // i and firstindex are the index in the cell array (mode==0) or the
+  // i and first are the index in the cell array (mode==0) or the
   // possible values to be considered (mode==1)
-  for(unsigned i=firstindex; i<cells.size(); ++i){
+  for(unsigned i=first; i<last; ++i){
     
     // get the set for this cell
     std::set<unsigned> tmp; 
@@ -123,17 +117,18 @@ bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>
     }
     else{
       // tmp is a set of possible cells for this value
-      for(unsigned cell = 0; cell<9; ++cell){
-	if(cells[cell]->checkValue(i+1)){
-	  tmp.insert(cell);
+      for(unsigned c=0; auto& cell : cells){
+	if(cell->checkValue(i)){
+	  tmp.insert(c);
 	}
+	++c;
       }
-	
     }
 
     if(tmp.size() == 0){
       std::cout << " Warning in NineCell::" << __FUNCTION__ << ". A set of possible values"
 		<< " with zero size was received. This should not be possible" << std::endl;
+      exit(1);
     }
     
     // check number of possibles for this cell (mode==0)
@@ -149,40 +144,40 @@ bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>
       continue;
     }
 
-    // union of sets.
-    std::set<unsigned> theunion = theset;
-    theunion.merge(tmp);
-
-    if(theunion.size()>setsize){
+    // union of setA with the possible cells (mode==0) or values (mode==1).
+    std::set<unsigned> unionSetA = setA;
+    unionSetA.merge(tmp); // union of setA and 'tmp'
+    
+    if(unionSetA.size()>setsize){
       // this cannot be a set of size 'setsize'. move to the next cell
       continue;
     }
 
     // these are the indexes of cells in the group (mode==0)
     // or the group of possible values (mode==1)
-    std::vector<unsigned> unionindexes = indexes; 
-    unionindexes.push_back(i + mode);
-
+    std::set<unsigned> newSetB = setB;
+    newSetB.insert(i);
+    
     // win condition is 'N' cells forming a union of 'N' possible values (mode==0)
     // or
     // 'N' possibilities found exclusively in a union of 'N' cells (mode==1)
-    if(theunion.size() == setsize && unionindexes.size() == setsize){
+    if(unionSetA.size() == setsize && newSetB.size() == setsize){
       if(mode==0){
-	removeValues( theunion, unionindexes );
+	removeValues( unionSetA, newSetB );
       }
       else{
-	removeCells( theunion, unionindexes );
+	removeCells( unionSetA, newSetB );
       }
     }
     else{
       // this can be a set of size 'setsize', continue searching
-      progress |= checkForSets(mode, setsize, theunion, unionindexes);
+      progress |= checkForSets(mode, setsize, unionSetA, newSetB);
     }
   }
   return progress; // to continue searching
 }
 
-void NineCell::removeValues(std::set<unsigned>& values, std::vector<unsigned>& indexes){
+void NineCell::removeValues(std::set<unsigned>& values, std::set<unsigned>& indexes){
 
   // this function removes all 'values' from cells that are not in 'indexes'
   
@@ -199,24 +194,24 @@ void NineCell::removeValues(std::set<unsigned>& values, std::vector<unsigned>& i
   }
 }
 
-void NineCell::removeCells(std::set<unsigned>& values, std::vector<unsigned>& indexes){
+void NineCell::removeCells(std::set<unsigned>& indexes, std::set<unsigned>& values){
 
-  // this function removes all possibles that are not in 'indexes'
-  // from the cells in 'values'
+  // this function removes all possibles that are not in 'values'
+  // from the cells in 'indexes'
 
   std::cout << " cell IDs ";
-  for( auto& idx :  values)
+  for( auto& idx :  indexes)
     std::cout << idx << " ";
   std::cout << " possible values ";
-  for(auto& val : indexes){
+  for(auto& val : values){
     std::cout << val << " ";
   }
   std::cout << std::endl;
 
-  for( auto& idx : values){
+  for( auto& idx : indexes){
 
     for(unsigned p = 1; p<10; ++p){
-      if( std::find(std::begin(indexes), std::end(indexes), p) == std::end(indexes) ){
+      if( std::find(std::begin(values), std::end(values), p) == std::end(values) ){
 	// this possible is not in 'indexes'
 	cells[idx]->removePossible(p);
       }
@@ -225,11 +220,15 @@ void NineCell::removeCells(std::set<unsigned>& values, std::vector<unsigned>& in
   
 }
 
-void NineCell::setPossibles(unsigned index, std::vector<unsigned>& possibles){
+void NineCell::setPossibles(unsigned index, std::set<unsigned>& possibles){
   if(index>cells.size()){
     std::cout << " Warning in NineCell::" << __FUNCTION__ << ", Cannot set possibles "
 	      << " for index " << index << " which is invalid " << std::endl;
   }
+
+  std::cout << " index " << index << " possibles ";
+  for( auto& p : possibles){ std::cout << p << " "; }
+  std::cout << std::endl;
   
   for(unsigned val = 1; val<10; ++val){    
     if( std::find(std::begin(possibles), std::end(possibles), val) == std::end(possibles) ){

@@ -96,3 +96,4 @@ std::set<unsigned> Cell::getSetOfPossibles(){
   
   return tmp;
 }
+

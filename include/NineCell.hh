@@ -27,12 +27,13 @@ public:
   
   bool resolveConstraints();
 
-  bool checkForSetsOfOne();
-  bool checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>& theset, std::vector<unsigned>& indexes);
-  void removeValues(std::set<unsigned>& values, std::vector<unsigned>& indexes);
-  void removeCells(std::set<unsigned>& values, std::vector<unsigned>& indexes);
+  bool checkForSets(unsigned mode, unsigned& setsize,
+		    std::set<unsigned>& theset, std::set<unsigned>& indexes);
 
-  void setPossibles(unsigned index, std::vector<unsigned>& possibles);
+  void removeValues(std::set<unsigned>& values, std::set<unsigned>& indexes);
+  void removeCells(std::set<unsigned>& values, std::set<unsigned>& indexes);
+
+  void setPossibles(unsigned index, std::set<unsigned>& possibles);
 
   void printPossibles();
 
