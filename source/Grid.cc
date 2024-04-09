@@ -42,29 +42,13 @@ void Grid::printGrid(){
   unsigned vals[3][3] = { {1,2,3}, {4,5,6}, {7,8,9} };
   
   std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
-  
-  // loop over rows
-  for(int row=0; row<gridDim; ++row){
 
-    // 3 times for each row
-    for(int i=0; i<3; ++i){
-      
-      std::cout << "|" ;
-      // loop over columns
-      for(int col=0; col<gridDim; ++col){
-	
-	std::shared_ptr<Cell> c( cells[getCellID(row,col)]) ;
-	
-	// check one set of 3 values for this cell
-	for( unsigned& val : vals[i]){
-	  ( c->checkValue(val) ) ? std::cout << val : std::cout << " ";
-	}
-	std::cout << "|" ;
-      }
-      std::cout << std::endl;
-    }
-    std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
+  // loop over ternarys
+  for(int tn=0; tn<3; ++tn){
+    ternaries[tn].printTernary();
   }
+  
+  //std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
 }
 
 void Grid::printCellIDs(){

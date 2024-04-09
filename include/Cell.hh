@@ -34,13 +34,15 @@ public:
 
   bool isSolved();
   unsigned getSolvedValue();
-  unsigned findSolvedValue();
   unsigned getNPossibles();
 
   std::set<unsigned> getSetOfPossibles();
+  bool checkPossible(unsigned val);
 
 private:
 
+  unsigned findSolvedValue();
+  
   unsigned cellID;
   std::vector<bool> possibles;
   unsigned nPossibles;

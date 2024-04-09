@@ -36,7 +36,11 @@ public:
 
   void setPossibles(unsigned index, std::set<unsigned>& possibles);
 
+  bool checkThird(unsigned third, unsigned possible);
+  void removePossibleFromThird(unsigned third, unsigned possible);
+    
   void printPossibles();
+  void printNineCell();
 
 private:
   std::vector< std::shared_ptr<Cell> > cells;

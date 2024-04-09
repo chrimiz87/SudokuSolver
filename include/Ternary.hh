@@ -27,6 +27,8 @@ public:
   bool resolveComplex();
   bool resolveNineCells();
 
+  void printTernary();
+
 private:
   std::vector< std::shared_ptr<Cell> > cells;
   std::vector< NineCell > ncells;

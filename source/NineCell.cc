@@ -264,6 +264,32 @@ void NineCell::setPossibles(unsigned index, std::set<unsigned>& possibles){
   }
 }
 
+bool NineCell::checkThird(unsigned third, unsigned possible){
+
+  // value of 'third' must be 0,1,2
+  if(third>2){
+    std::cout << " Warning in NineCell::" << __FUNCTION__ << ", cannot choose"
+	      << " a third with value " << third << std::endl;
+    return false;
+  }
+
+  // this checks cells in one third (3) of the (9) cells
+  // for the possible value, setting response to 'true' if found
+  bool response = false;
+  for(int i=0+3*third; i<3+3*third; ++i){
+    response |= cells[i]->checkPossible(possible);
+  }
+
+  // return true if one cell in this third has the possible value
+  return response;
+}
+
+void NineCell::removePossibleFromThird(unsigned third, unsigned possible){
+  for(int i=0+3*third; i<3+3*third; ++i){
+    cells[i]->removePossible(possible);
+  }
+}
+
 void NineCell::printPossibles(){
   unsigned idx=0;
   for(auto& cell : cells){
@@ -275,4 +301,26 @@ void NineCell::printPossibles(){
     std::cout << std::endl;
     ++idx;
   }
+}
+
+void NineCell::printNineCell(){
+
+  unsigned vals[3][3] = { {1,2,3}, {4,5,6}, {7,8,9} };
+
+  // 3 times for each row
+  for(int i=0; i<3; ++i){
+    
+    std::cout << "|" ;
+    // loop over columns
+    for(int col=0; col<9; ++col){
+      // check one set of 3 values for this cell
+      for( unsigned& val : vals[i]){
+	( cells[col]->checkValue(val) ) ? std::cout << val : std::cout << " ";
+      }
+      std::cout << "|" ;
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
+  
 }
