@@ -5,7 +5,7 @@
 #include "Cell.hh"
 #include "Ternary.hh"
 
-Grid::Grid() : gridDim(9) , ternaries(6) {
+Grid::Grid() : gridDim(9) , ternaries(6), canGuess(true) {
   // create 9x9 array of Cells on the heap, holding only shared pointers.
   for(int i=0; i<gridDim*gridDim; ++i){
 
@@ -37,13 +37,6 @@ Grid::Grid() : gridDim(9) , ternaries(6) {
   for(int i=0; i<6; ++i){
     ternaries[i].organiseCells();
   }
-
-  // // print cell IDs of ternaries
-  // std::cout << " printing Cell IDs held in ternaries" << std::endl;
-  // for(int i=0; i<6; ++i){
-  //   std::cout << " Terary " << i << " = "  << std::endl;
-  //   ternaries[i].printCellIDs();
-  // }
   
 }
 
@@ -65,8 +58,7 @@ void Grid::printGrid(){
   for(int tn=0; tn<3; ++tn){
     ternaries[tn].printTernary();
   }
-  
-  //std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
+  std::cout << std::endl;
 }
 
 void Grid::printCellIDs(){
@@ -92,14 +84,38 @@ void Grid::setCellValue(unsigned row, unsigned col, unsigned val){
   }
   
   unsigned cellID = getCellID(row, col);
-  
+
+  setCellValue(cellID, val);
+}
+
+void Grid::setCellValue(unsigned cellID, unsigned val){
   if(not checkValidCellID(cellID)){
     std::cout << " Warning in Grid::" << __FUNCTION__
 	      << ". cellID " << cellID << " is not valid." << std::endl;
     return; 
   }
-
+  
   cells[cellID]->setValue(val);
+}
+
+void Grid::setCellSetOfValues(unsigned cellID, std::set<unsigned>& set){
+
+  if(not checkValidCellID(cellID)){
+    std::cout << " Warning in Grid::" << __FUNCTION__
+	      << ". cellID " << cellID << " is not valid." << std::endl;
+    return; 
+  }
+  
+  cells[cellID]->setSetOfPossibles(set);
+}
+
+unsigned Grid::getCellSolvedValue(unsigned cellID){
+  if(cellID>=cells.size()){
+    std::cout << " Warning in Grid::" << __FUNCTION__ << ", cell ID " << cellID
+	      << " requested but it's not valid " << std::endl;
+    return 0;
+  }
+  return cells[cellID]->getSolvedValue();
 }
 
 void Grid::setGridValues(std::vector< std::vector<unsigned> >& rows){
@@ -183,14 +199,118 @@ void Grid::solve(){
     }
   }
 
-  std::cout << " Finished solving the puzzle ";
   if(countProgress==3){
-    std::cout << "due to progress having stalled" << std::endl;
+    std::cout << "Progress stalled ... ";
+    
+    // for debugging
+    // std::cout << " The grid looks like this: " << std::endl;
+    // printGrid();
+
+    if(canGuess){
+      // guess
+      std::cout << " will try to guess!" << std::endl;
+      bool result = guess();
+      
+      if(result){
+	std::cout << "Solved succesfully after guessing!" << std::endl;
+      }
+    }
+    else{
+      std::cout << " this grid is a copy and cannot guess." << std::endl;
+    }
+      
   }
   else{
-    std::cout << "successfully!" << std::endl;
+    std::cout << "Solved succesfully!" << std::endl;
   }
 }
+
+bool Grid::guess(){
+  // find cell that has exactly two options.
+  std::set<unsigned> vals;
+  for(unsigned i=0; i<cells.size(); ++i){
+    if(cells[i]->getNPossibles()==2){
+      vals = cells[i]->getSetOfPossibles();
+      
+      if(vals.size()!=2){
+	continue;
+      }
+      
+      // for each potential value of this cell,
+      // create a second grid, copy the contents of the first
+      // grid into the second, and then 'guess' one of the two
+      // values for this cell.
+      
+      // if it does not work, try the other value.
+
+      // if neither works, continue working through the cells
+      // until one of them works
+      
+      for(auto& val : vals){
+	
+	// create a second grid
+	Grid b;
+	
+	// avoid chains of guessing.
+	b.setCanGuess(false);
+    
+	// copy over all cells 
+	for(unsigned i=0; i<cells.size(); ++i){
+	  
+	  //copy contents
+	  if(cells[i]->getNPossibles()==1){
+	    b.setCellValue(i, cells[i]->getSolvedValue());
+	  }
+	  else{
+	    auto temp = cells[i]->getSetOfPossibles() ;
+	    b.setCellSetOfValues(i, temp);
+	  }
+	  
+	}
+	
+	// set the cell and value of the guess
+	b.setCellValue(i, val);
+
+	std::cout << " trying to guess. Cell " << i
+		  << " was set to the value " << val << std::endl;
+
+	// std::cout << " and the new grid looks like:" << std::endl;
+	// b.printGrid();
+	
+	// now try to solve this grid
+	b.solve();
+
+	if(b.isSolved()){
+	  std::cout << "This guess was successful!" << std::endl;
+
+	  // std::cout << " The grid now looks like:" << std::endl;
+	  // b.printGrid();
+
+	  // copy contents of b over to the primary grid.
+
+	  for(int j=0; j<cells.size(); ++j){
+	    if(cells[j]->getNPossibles()>1){
+	      // copy only cells that are not solved
+	      cells[j]->setValue(b.getCellSolvedValue(j) );
+	    }
+	  }
+	  
+	  return true;
+	}
+	
+      } // try both values
+      
+    } // if possibles == 2 
+
+  } // loop over cells
+  
+  return false;
+}
+
+void Grid::setCanGuess(bool cg){
+  canGuess = cg;
+}
+
 
 bool Grid::isSolved(){
   for(auto& cell : cells){

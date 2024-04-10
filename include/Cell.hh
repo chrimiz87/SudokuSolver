@@ -37,6 +37,8 @@ public:
   unsigned getNPossibles();
 
   std::set<unsigned> getSetOfPossibles();
+  void setSetOfPossibles(std::set<unsigned>& set);
+  
   bool checkPossible(unsigned val);
 
 private:

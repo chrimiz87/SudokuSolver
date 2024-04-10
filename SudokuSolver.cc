@@ -74,29 +74,33 @@ int main(){
   };
   a.setGridValues(gridcontent);
 
+  std::cout << " The initial grid looks like:" << std::endl;
   a.printGrid();
 
-  a.resolve();
+  // a.resolve();
+  
   // a.resolve();
   // a.resolve();
   // a.resolve();
-  std::cout << " After resolve 1 " << std::endl;
+  // std::cout << " After resolve 1 " << std::endl;
 
-  a.printGrid();\
+  // a.printGrid();\
 
-  std::cout << std::endl;
-  std::cout << " Starting resolve 2 " << std::endl;
-  a.resolve();
-  std::cout << " After resolve 2 " << std::endl;
-  a.printGrid();
+  // std::cout << std::endl;
+  // std::cout << " Starting resolve 2 " << std::endl;
+  // a.resolve();
+  
+  // std::cout << " After resolve 2 " << std::endl;
+  // a.printGrid();
 
-  std::cout << std::endl;
-  std::cout << " Starting resolve 3 " << std::endl;
-  a.resolve();
-  std::cout << " After resolve 3 " << std::endl;
-  a.printGrid();
+  // std::cout << std::endl;
+  // std::cout << " Starting resolve 3 " << std::endl;
+  // a.resolve();
+  // std::cout << " After resolve 3 " << std::endl;
+  // a.printGrid();
 
   a.solve();
+    
   a.printGrid();
 
   return 0;

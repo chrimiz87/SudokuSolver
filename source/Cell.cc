@@ -119,6 +119,17 @@ std::set<unsigned> Cell::getSetOfPossibles(){
   return tmp;
 }
 
+void Cell::setSetOfPossibles(std::set<unsigned>& set){
+
+  for(unsigned val=1; val<10; ++val){
+    if(set.find(val) == std::end(set)){
+      // this value is not in the set of possible values
+      removePossible(val);
+    }
+  }
+  
+}
+
 bool Cell::checkPossible(unsigned val){
 
   // only 1--9 are valid possibles

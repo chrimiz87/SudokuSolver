@@ -29,6 +29,10 @@ public:
   void setGridValues(std::vector< std::vector<unsigned> >& vals);
   void setRowValues(unsigned row, std::vector<unsigned>& vals);
   void setCellValue(unsigned row, unsigned col, unsigned val);
+  void setCellValue(unsigned cellID, unsigned val);
+  void setCellSetOfValues(unsigned cellID, std::set<unsigned>& set);
+
+  unsigned getCellSolvedValue(unsigned cellID);
 
   inline unsigned getCellID(unsigned row, unsigned col);
   inline std::pair<unsigned, unsigned> getCellRowCol(unsigned cellID);
@@ -40,12 +44,16 @@ public:
   bool resolve();
   void solve();
 
+  bool guess();
+  void setCanGuess(bool canGuess);
+
   bool isSolved();
   
 private:
   unsigned gridDim;
-  std::vector< std::shared_ptr<Cell> > cells;
   std::vector< Ternary > ternaries;
+  bool canGuess;
+  std::vector< std::shared_ptr<Cell> > cells;
 };
 
 #endif // GRID_HH
