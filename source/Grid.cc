@@ -17,16 +17,34 @@ Grid::Grid() : gridDim(9) , ternaries(6) {
     unsigned colA  = index%9;
     unsigned ternA = rowA/3;
     unsigned ternArow = rowA%3; // row in the TERNARY
-    ternaries[ternA].addCell( ternArow*9+colA, cells.back() );
+    ternaries[ternA].addCell( ternArow, colA, cells.back() );
     
     // second 3 ternarys, holding columns
-    // the indexing just needs rows and columns to be swapped 
-    unsigned rowB = colA;
-    unsigned colB = rowA;
+    // define a left-hand (-90 degree) rotation of the Grid 
+
+    // first column in grid is the first row of the ternary
+    unsigned rowB = index%9;
+    // last row in grid is the first column of the ternary
+    unsigned colB = abs(int(index)/9-8);
+
     unsigned ternB = rowB/3;
     unsigned ternBrow = rowB%3;
-    ternaries[ternB+3].addCell( ternBrow*9+colB, cells.back() );
+
+    ternaries[ternB+3].addCell( ternBrow, colB, cells.back() );
   }
+
+  // tell each ternary to organise its cells into rows and squares
+  for(int i=0; i<6; ++i){
+    ternaries[i].organiseCells();
+  }
+
+  // // print cell IDs of ternaries
+  // std::cout << " printing Cell IDs held in ternaries" << std::endl;
+  // for(int i=0; i<6; ++i){
+  //   std::cout << " Terary " << i << " = "  << std::endl;
+  //   ternaries[i].printCellIDs();
+  // }
+  
 }
 
 void Grid::printGridDimension(){

@@ -21,7 +21,8 @@ public:
 
   void printCellIDs();
 
-  void addCell(unsigned index, std::shared_ptr<Cell>& cell);
+  void addCell(unsigned row, unsigned col, std::shared_ptr<Cell>& cell);
+  void organiseCells();
 
   bool resolveAll();
   bool resolveComplex();
