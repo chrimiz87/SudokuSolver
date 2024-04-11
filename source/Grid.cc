@@ -40,22 +40,22 @@ void Grid::buildTernaries(){
   for(int index=0; index<gridDim*gridDim; ++index){
 
     // first 3 ternarys, holding rows
-    unsigned rowA  = index/9; // row in the GRID
-    unsigned colA  = index%9;
-    unsigned ternA = rowA/3;
-    unsigned ternArow = rowA%3; // row in the TERNARY
+    unsigned rowA  = index/gridDim; // row in the GRID
+    unsigned colA  = index%gridDim;
+    unsigned ternA = rowA/(gridDim/3);
+    unsigned ternArow = rowA%(gridDim/3); // row in the TERNARY
     ternaries[ternA].addCell( ternArow, colA, cells[index] );
     
     // second 3 ternarys, holding columns
     // define a left-hand (-90 degree) rotation of the Grid 
 
     // first column in grid is the first row of the ternary
-    unsigned rowB = index%9;
+    unsigned rowB = index%gridDim;
     // last row in grid is the first column of the ternary
-    unsigned colB = abs(int(index)/9-8);
+    unsigned colB = abs(int(index)/int(gridDim)-(int(gridDim)-1));
 
-    unsigned ternB = rowB/3;
-    unsigned ternBrow = rowB%3;
+    unsigned ternB = rowB/(gridDim/3);
+    unsigned ternBrow = rowB%(gridDim/3);
 
     ternaries[ternB+3].addCell( ternBrow, colB, cells[index] );
   }
@@ -139,17 +139,11 @@ void Grid::setCellValue(unsigned cellID, unsigned val){
   cells[cellID]->setValue(val);
 }
 
-unsigned Grid::getCellSolvedValue(unsigned cellID){
-  if(cellID>=cells.size()){
-    std::cout << " Warning in Grid::" << __FUNCTION__ << ", cell ID " << cellID
-	      << " requested but it's not valid " << std::endl;
-    return 0;
-  }
-  return cells[cellID]->getSolvedValue();
-}
-
+// This function is used to define the initial state of the Grid.
+// It sets the value of cells in each row to those specified in
+// the 2D vector called 'rows' by calling Grid::setRowValues(...)
 void Grid::setGridValues(std::vector< std::vector<unsigned> >& rows){
-  if(rows.size()!=9){
+  if(rows.size()!=gridDim){
     std::cout << "Warning in Grid::" << __FUNCTION__
 	      << ". Cannot set the grid values with " << rows.size() << " rows " << std::endl;
     return; 
@@ -160,9 +154,13 @@ void Grid::setGridValues(std::vector< std::vector<unsigned> >& rows){
   
 }
 
+// This function is used to define the initial state of the Grid.
+// It sets the value of all cells in a row to those specified in the
+// 'vals' vector, which is required to have size == 9 (gridDim)
+// No action is taken if the value is 0, which is not a valid value.
 void Grid::setRowValues(unsigned row, std::vector<unsigned>& vals){
 
-  if(vals.size() != 9){
+  if(vals.size() != gridDim){
     std::cout << "Warning in Grid::" << __FUNCTION__
 	      << ". Cannot set a row of dimension " << vals.size() << std::endl;
     return; 
@@ -175,22 +173,31 @@ void Grid::setRowValues(unsigned row, std::vector<unsigned>& vals){
   }
 }
 
+// This function simply computes the cell ID from the row and column
 inline unsigned Grid::getCellID(unsigned row, unsigned col){
   return (row*gridDim + col);
 }
 
+// This function simply checks the value is valid (1..9)
 inline bool Grid::checkValidValue(unsigned val){
   return (val>0 && val<10);
 }
 
+// This function simply checks the cell ID is valid
+// i.e. less than cells.size() or gridDim*gridDim
 inline bool Grid::checkValidCellID(unsigned cellID){
   return (cellID<cells.size());
 }
 
+// This function simply checks the row and column values are valid
+// (i.e. less than GridDim)
 inline bool Grid::checkValidRowCol(unsigned row, unsigned col){
   return (row<gridDim && col<gridDim);
 }
 
+// This function makes one step of the solving algorithms, by trying
+// to 'resolve' the rules of Sudoku. It simply calls Ternary::resolveAll()
+// for all 6 Ternaries in this grid and returns the 'progress' boolean.
 bool Grid::resolve(){
 
   bool progress = false;
@@ -205,7 +212,20 @@ bool Grid::resolve(){
   return progress;
 }
 
-// attempt to solve the puzzle
+// This function attempts to solve the puzzle.
+// Each call to 'resolve' returns a 'progress' boolean if applying
+// the Sudoku rules had a positive result (reduction in the number of
+// possible values in one of the cells).
+//
+// Calls are made to the Grid::resolve() function until the puzzle
+// is solved, or there has been no progress for 3 calls.
+//
+// In the latter case, the grid will be printed and the 'guessing'
+// feature will be called via Grid::guess(). Guessing will
+// either solve the puzzle, or the puzzle will remain stalled.
+//
+// The guessing feature makes copies of the grid with 'canGuess' set to false,
+// and there is an extra printout in case one of the grid copies stalls.
 void Grid::solve(){
   unsigned countProgress = 0;
   bool progress = false;
@@ -255,11 +275,10 @@ void Grid::solve(){
   }
 }
 
+// This function allows the Grid to guess a value for any cell with only 2 options.
+// This is usually needed for the most difficult Sudoku puzzles.
+// Guesses are only supported for cells with exactly 2 possible values.
 bool Grid::guess(){
-
-  // This function allows the Grid to guess a value for any cell with only 2 options.
-  // This is usually needed for the most difficult Sudoku puzzles.
-  // Guesses are only supported for cells with exactly 2 possible values.
 
   // find cell that has exactly two options.
   std::set<unsigned> vals;
@@ -309,14 +328,8 @@ bool Grid::guess(){
 	  // std::cout << " The grid now looks like:" << std::endl;
 	  // b.printGrid();
 
-	  // copy contents of b over to the primary grid.
-
-	  for(int j=0; j<cells.size(); ++j){
-	    if(cells[j]->getNPossibles()>1){
-	      // copy only cells that are not solved
-	      cells[j]->setValue(b.getCellSolvedValue(j) );
-	    }
-	  }
+	  // copy newly solved cells in Grid b over to the primary grid.
+	  updateGrid(b);
 	  
 	  return true;
 	}
@@ -330,11 +343,26 @@ bool Grid::guess(){
   return false;
 }
 
+// This function sets whether the grid can use the 'guessing' feature
 void Grid::setCanGuess(bool cg){
   canGuess = cg;
 }
 
+// This function checks all cells of the grid.a
+// Those that are not solved (nPossibles>1), the value is set
+// to the solved value from the other grid (Grid g) 
+void Grid::updateGrid(Grid& g){
 
+  for(int i=0; i<cells.size(); ++i){
+    if(cells[i]->getNPossibles()>1){
+      // copy only cells that are not solved
+      cells[i]->setValue(g.cells[i]->getSolvedValue());
+    }
+  }
+  
+}
+
+// This function checks if all cells in the grid are solved
 bool Grid::isSolved(){
   for(auto& cell : cells){
     if( not cell->isSolved())

@@ -25,7 +25,7 @@ public:
   Grid(Grid& g);
 
   void buildTernaries();
-
+  
   void printGridDimension();
   void printGridNCells();
   void printGrid();
@@ -35,8 +35,6 @@ public:
   void setRowValues(unsigned row, std::vector<unsigned>& vals);
   void setCellValue(unsigned row, unsigned col, unsigned val);
   void setCellValue(unsigned cellID, unsigned val);
-
-  unsigned getCellSolvedValue(unsigned cellID);
 
   inline unsigned getCellID(unsigned row, unsigned col);
   inline std::pair<unsigned, unsigned> getCellRowCol(unsigned cellID);
@@ -50,6 +48,7 @@ public:
 
   bool guess();
   void setCanGuess(bool canGuess);
+  void updateGrid(Grid& g);
 
   bool isSolved();
   
