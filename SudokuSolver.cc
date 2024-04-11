@@ -11,7 +11,7 @@ int main(){
   // some basic printouts
   if(false){
     a.printGridDimension();
-    a.printGridNSquares();
+    a.printGridNCells();
     a.printGrid();
 
     a.setCellValue(0,0,1);
@@ -19,8 +19,6 @@ int main(){
     a.setCellValue(0,2,3);
 
     a.printGrid();
-
-    // a.printCellIDs();
 
     a.resolve();
 
@@ -60,17 +58,31 @@ int main(){
   // };
   // a.setGridValues(gridcontent);
 
-  // extreme difficulty
+  // // extreme difficulty
+  // std::vector< std::vector<unsigned> > gridcontent ={
+  //   {8,6,0,0,0,3,0,0,0},
+  //   {0,0,0,5,0,9,1,0,2},
+  //   {0,0,0,0,4,0,0,0,0},
+  //   {2,0,6,0,0,0,3,0,5},
+  //   {0,0,0,0,0,0,7,0,0},
+  //   {0,4,0,0,0,0,0,0,1},
+  //   {4,3,2,0,0,0,0,0,7},
+  //   {0,1,0,6,0,8,0,0,0},
+  //   {0,0,0,0,0,2,0,0,0},
+  // };
+  // a.setGridValues(gridcontent);
+
+    // extreme difficulty
   std::vector< std::vector<unsigned> > gridcontent ={
-    {8,6,0,0,0,3,0,0,0},
-    {0,0,0,5,0,9,1,0,2},
-    {0,0,0,0,4,0,0,0,0},
-    {2,0,6,0,0,0,3,0,5},
-    {0,0,0,0,0,0,7,0,0},
-    {0,4,0,0,0,0,0,0,1},
-    {4,3,2,0,0,0,0,0,7},
-    {0,1,0,6,0,8,0,0,0},
-    {0,0,0,0,0,2,0,0,0},
+    {8,0,0,0,0,0,0,0,0},
+    {0,4,0,0,0,0,0,6,0},
+    {0,0,6,4,0,0,0,1,0},
+    {0,0,0,5,0,0,9,0,0},
+    {0,1,0,0,0,0,0,0,8},
+    {0,0,3,0,9,7,0,0,5},
+    {0,0,0,0,8,5,0,0,0},
+    {0,0,0,7,0,4,1,2,0},
+    {7,0,0,2,0,0,0,0,0},
   };
   a.setGridValues(gridcontent);
 

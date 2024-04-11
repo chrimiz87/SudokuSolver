@@ -5,19 +5,46 @@
 #include "Cell.hh"
 #include "Ternary.hh"
 
+// constructor. Creates a grid of gridDim*gridDim cells
+// and calls buildTernaries to put those cells into ternaries
+// by default, 'canGuess' is true, enabling the 'guessing' function.
 Grid::Grid() : gridDim(9) , ternaries(6), canGuess(true) {
   // create 9x9 array of Cells on the heap, holding only shared pointers.
-  for(int i=0; i<gridDim*gridDim; ++i){
+  for(int index=0; index<gridDim*gridDim; ++index){
 
-    unsigned index = cells.size();
     cells.emplace_back( std::make_shared<Cell>(index) );
+  }
+
+  // fill ternary objects from the cells
+  buildTernaries();
+}
+
+// copy constructor. Used for the 'guessing' function of the Grid
+Grid::Grid(Grid& g) : gridDim(9), ternaries(6), canGuess(true) {
+
+  // deep copy of cells from the existing grid
+  for(int i=0; i<gridDim*gridDim; ++i){
+    unsigned index = cells.size();
+    cells.emplace_back( std::make_shared<Cell>( *(g.cells[index]) ) );
+  }
+
+  // fill ternary objects from the cells
+  buildTernaries();
+}
+
+// This function is called by the Grid constructor
+// It puts each cell into two of the ternaries (one row, one column)
+// and then calls Ternary::organiseCells()
+void Grid::buildTernaries(){
+
+  for(int index=0; index<gridDim*gridDim; ++index){
 
     // first 3 ternarys, holding rows
     unsigned rowA  = index/9; // row in the GRID
     unsigned colA  = index%9;
     unsigned ternA = rowA/3;
     unsigned ternArow = rowA%3; // row in the TERNARY
-    ternaries[ternA].addCell( ternArow, colA, cells.back() );
+    ternaries[ternA].addCell( ternArow, colA, cells[index] );
     
     // second 3 ternarys, holding columns
     // define a left-hand (-90 degree) rotation of the Grid 
@@ -30,51 +57,62 @@ Grid::Grid() : gridDim(9) , ternaries(6), canGuess(true) {
     unsigned ternB = rowB/3;
     unsigned ternBrow = rowB%3;
 
-    ternaries[ternB+3].addCell( ternBrow, colB, cells.back() );
+    ternaries[ternB+3].addCell( ternBrow, colB, cells[index] );
   }
 
   // tell each ternary to organise its cells into rows and squares
-  for(int i=0; i<6; ++i){
-    ternaries[i].organiseCells();
+  for(auto& ternary : ternaries){
+    ternary.organiseCells();
   }
   
 }
 
+// This function simply prints the grid dimension
 void Grid::printGridDimension(){
   std::cout << " Grid dimensions " << gridDim << std::endl;
 }
 
-void Grid::printGridNSquares(){
+// This function simply prints the number of cells in the grid
+void Grid::printGridNCells(){
   std::cout << " Grid number of squares " << gridDim*gridDim << std::endl;
 }
 
+// This function simply prints the grid in a nice format.
 void Grid::printGrid(){
 
-  unsigned vals[3][3] = { {1,2,3}, {4,5,6}, {7,8,9} };
-  
   std::cout << "|---|---|---|---|---|---|---|---|---|" << std::endl;
 
-  // loop over ternarys
-  for(int tn=0; tn<3; ++tn){
-    ternaries[tn].printTernary();
-  }
+  // print first 3 of the 6 ternaries (prints the full grid)
+  auto ternaryprinter = [](Ternary& ternary){
+    ternary.printTernary();
+  };
+  std::for_each( std::begin(ternaries), std::begin(ternaries)+3, ternaryprinter);
   std::cout << std::endl;
 }
 
+// this function prints the ID of each cell in the Grid.
+// First it prints all the cell IDs in a line.
+// Then it prints the cell IDs of each Ternary separately.
 void Grid::printCellIDs(){
+
+  // print ID of each cell
   auto printer = [](auto& cell){
     std::cout << cell->getID() << " ";
   };
-  
   std::for_each( std::begin(cells), std::end(cells), printer);
   std::cout << std::endl;
 
+  // print ID of each ternary
   auto ternaryprinter = [](Ternary& ternary){
     ternary.printCellIDs();
   };
   std::for_each( std::begin(ternaries), std::end(ternaries), ternaryprinter);
 }
 
+// this function sets the value of the cell with cooridnates given by
+// row and column, to the value specfied by val.
+// the function checks for valid 'val' and then computes the cell index
+// (cellID) and calls the overloaded 'setCellValue' function below
 void Grid::setCellValue(unsigned row, unsigned col, unsigned val){
 
   if(not checkValidValue(val)){
@@ -88,6 +126,9 @@ void Grid::setCellValue(unsigned row, unsigned col, unsigned val){
   setCellValue(cellID, val);
 }
 
+// this function sets the value of the cell with index 'cellID' to the
+// value specfied by val. The function checks for valid 'cellID' and
+// then calls Cell::setValue(...);
 void Grid::setCellValue(unsigned cellID, unsigned val){
   if(not checkValidCellID(cellID)){
     std::cout << " Warning in Grid::" << __FUNCTION__
@@ -96,17 +137,6 @@ void Grid::setCellValue(unsigned cellID, unsigned val){
   }
   
   cells[cellID]->setValue(val);
-}
-
-void Grid::setCellSetOfValues(unsigned cellID, std::set<unsigned>& set){
-
-  if(not checkValidCellID(cellID)){
-    std::cout << " Warning in Grid::" << __FUNCTION__
-	      << ". cellID " << cellID << " is not valid." << std::endl;
-    return; 
-  }
-  
-  cells[cellID]->setSetOfPossibles(set);
 }
 
 unsigned Grid::getCellSolvedValue(unsigned cellID){
@@ -201,10 +231,10 @@ void Grid::solve(){
 
   if(countProgress==3){
     std::cout << "Progress stalled ... ";
-    
+
     // for debugging
-    // std::cout << " The grid looks like this: " << std::endl;
-    // printGrid();
+    std::cout << " The grid looks like this: " << std::endl;
+    printGrid();
 
     if(canGuess){
       // guess
@@ -226,6 +256,11 @@ void Grid::solve(){
 }
 
 bool Grid::guess(){
+
+  // This function allows the Grid to guess a value for any cell with only 2 options.
+  // This is usually needed for the most difficult Sudoku puzzles.
+  // Guesses are only supported for cells with exactly 2 possible values.
+
   // find cell that has exactly two options.
   std::set<unsigned> vals;
   for(unsigned i=0; i<cells.size(); ++i){
@@ -233,7 +268,9 @@ bool Grid::guess(){
       vals = cells[i]->getSetOfPossibles();
       
       if(vals.size()!=2){
-	continue;
+	std::cout << " Error in Grid::" << __FUNCTION__ << ", this cell has two possibles"
+		  << " but the set of possibles does not have size == 2 " << std::endl;
+	exit(1);
       }
       
       // for each potential value of this cell,
@@ -248,26 +285,12 @@ bool Grid::guess(){
       
       for(auto& val : vals){
 	
-	// create a second grid
-	Grid b;
+	// create a second grid, using copy constructor
+	Grid b(*this);
 	
 	// avoid chains of guessing.
 	b.setCanGuess(false);
-    
-	// copy over all cells 
-	for(unsigned i=0; i<cells.size(); ++i){
-	  
-	  //copy contents
-	  if(cells[i]->getNPossibles()==1){
-	    b.setCellValue(i, cells[i]->getSolvedValue());
-	  }
-	  else{
-	    auto temp = cells[i]->getSetOfPossibles() ;
-	    b.setCellSetOfValues(i, temp);
-	  }
-	  
-	}
-	
+
 	// set the cell and value of the guess
 	b.setCellValue(i, val);
 

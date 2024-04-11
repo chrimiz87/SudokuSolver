@@ -24,6 +24,9 @@ public:
   Cell() = delete;
   Cell(unsigned ID);
 
+  // copy constructor
+  Cell(Cell& c);
+
   unsigned getID();
 
   bool checkValue(unsigned val);
@@ -37,7 +40,6 @@ public:
   unsigned getNPossibles();
 
   std::set<unsigned> getSetOfPossibles();
-  void setSetOfPossibles(std::set<unsigned>& set);
   
   bool checkPossible(unsigned val);
 

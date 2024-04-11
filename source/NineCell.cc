@@ -158,7 +158,7 @@ bool NineCell::checkForSets(unsigned mode, unsigned& setsize, std::set<unsigned>
     }
 
     if(tmp.size() == 0){
-      std::cout << " Warning in NineCell::" << __FUNCTION__ << ". A set of possible values"
+      std::cout << " Error in NineCell::" << __FUNCTION__ << ". A set of possible values"
 		<< " with zero size was received. This should not be possible" << std::endl;
       exit(1);
     }

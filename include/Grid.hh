@@ -21,8 +21,13 @@ class Grid{
 public:
   Grid();
 
+  // copy constructor
+  Grid(Grid& g);
+
+  void buildTernaries();
+
   void printGridDimension();
-  void printGridNSquares();
+  void printGridNCells();
   void printGrid();
   void printCellIDs();
 
@@ -30,7 +35,6 @@ public:
   void setRowValues(unsigned row, std::vector<unsigned>& vals);
   void setCellValue(unsigned row, unsigned col, unsigned val);
   void setCellValue(unsigned cellID, unsigned val);
-  void setCellSetOfValues(unsigned cellID, std::set<unsigned>& set);
 
   unsigned getCellSolvedValue(unsigned cellID);
 

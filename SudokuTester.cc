@@ -11,7 +11,7 @@ int main(int argc, char** argv){
     if( std::string(argv[1]).compare("Test1")==0){
       Grid a;
       a.printGridDimension();
-      a.printGridNSquares();
+      a.printGridNCells();
       return 0;
     }
 

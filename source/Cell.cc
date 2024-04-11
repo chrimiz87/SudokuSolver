@@ -6,6 +6,15 @@ Cell::Cell(unsigned ID) : cellID(ID), possibles(9, true),
 			  nPossibles(9), solvedValue(0), resolved(false) {
 }
 
+// copy constructor
+Cell::Cell(Cell& c){
+  cellID      = c.cellID;
+  possibles   = c.possibles;
+  nPossibles  = c.nPossibles;
+  solvedValue = c.solvedValue;
+  resolved    = c.resolved;
+}
+
 unsigned Cell::getID(){
   return cellID;
 }
@@ -117,17 +126,6 @@ std::set<unsigned> Cell::getSetOfPossibles(){
   }
   
   return tmp;
-}
-
-void Cell::setSetOfPossibles(std::set<unsigned>& set){
-
-  for(unsigned val=1; val<10; ++val){
-    if(set.find(val) == std::end(set)){
-      // this value is not in the set of possible values
-      removePossible(val);
-    }
-  }
-  
 }
 
 bool Cell::checkPossible(unsigned val){
